@@ -1,0 +1,56 @@
+{
+  "name": "slack",
+  "description": "Slack workspace admin via natural language — channels, usergroups, Block Kit messages, scheduled posts, canvases, and full workspace templates",
+  "version": "0.0.1",
+  "author": {
+    "name": "JCodesMore",
+    "url": "https://github.com/JCodesMore"
+  },
+  "homepage": "https://github.com/JCodesMore/slack-for-ai-agents",
+  "repository": "https://github.com/JCodesMore/slack-for-ai-agents",
+  "license": "Apache-2.0",
+  "keywords": [
+    "slack",
+    "mcp",
+    "admin",
+    "workspace",
+    "block-kit",
+    "claude-code"
+  ],
+  "userConfig": {
+    "bot_token": {
+      "type": "string",
+      "title": "Slack Bot Token",
+      "description": "Your Slack bot token (xoxb-...) from https://api.slack.com/apps. Stored securely in your system keychain. Bot needs the OAuth scopes listed in the README for full access.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "mcpServers": {
+    "slack": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/start-mcp.mjs"],
+      "env": {
+        "CLAUDE_PLUGIN_DATA": "${CLAUDE_PLUGIN_DATA}",
+        "CLAUDE_PLUGIN_OPTION_BOT_TOKEN": "${user_config.bot_token}"
+      }
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/ensure-deps.mjs\""
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-banner.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}
