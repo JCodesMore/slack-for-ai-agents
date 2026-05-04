@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.0.3
+
+- Phase 4 — user groups (subteams). Seven `usergroups.*` tools:
+  - `slack_list_usergroups` (with optional include_disabled / include_count / include_users).
+  - `slack_create_usergroup` (name, handle, description, default channels).
+  - `slack_update_usergroup` (rename / re-handle / re-describe / change default channels).
+  - `slack_list_usergroup_users`, `slack_update_usergroup_users` (replaces full member list).
+  - `slack_disable_usergroup` / `slack_enable_usergroup` (reversible off-switch).
+- Tools surface `paid_teams_only` cleanly when the workspace is on a free plan (Slack restriction — user groups need Pro+).
+- Admin-role tools (`admin.users.setAdmin` / `setOwner` / `setRegular`) deferred — they require an admin user token (`xoxp-`), which we don't expose a config field for yet.
+
 ## 0.0.2
 
 - Phase 3 — channels. Eleven `conversations.*` tools:

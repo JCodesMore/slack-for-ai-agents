@@ -12,13 +12,13 @@ Channels, user groups, Block Kit messages, scheduled posts, canvases, retention 
 
 ## Status
 
-Early scaffold (v0.0.2). Phases 0–3 of 10 complete:
+Early scaffold (v0.0.3). Phases 0–4 of 10 complete:
 
 - [x] **Phase 0** — repo skeleton, manifest, MCP server boots
 - [x] **Phase 1** — `slack_whoami` proves token wiring works
 - [x] **Phase 2** — `/slack:setup` wizard + active-workspace state
 - [x] **Phase 3** — channels (list, create public/private, archive/unarchive, rename, topic, purpose, invite, kick, join, leave)
-- [ ] Phase 4 — user groups + admin roles
+- [x] **Phase 4** — user groups (list, create, update, list/update members, disable/enable). Admin-role tools deferred until we wire an admin user token.
 - [ ] Phase 5 — messages + Block Kit (sections, dividers, headers, actions, images, context, inputs)
 - [ ] Phase 6 — scheduled messages, reminders, canvases, retention
 - [ ] Phase 7 — users, incoming-webhooks walkthrough, raw-API escape hatch
