@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.0.4
+
+- Phase 5 — messages + Block Kit. Seven `chat.*` / `pins.*` / `reactions.*` tools:
+  - `slack_post_message` (text and/or Block Kit `blocks`, optional `thread_ts`, `reply_broadcast`, unfurl flags).
+  - `slack_post_ephemeral_message` (only-visible-to-one-user; can't be edited or deleted via API).
+  - `slack_update_message` (full replace of `text` / `blocks` — bot's own messages only).
+  - `slack_delete_message` (DESTRUCTIVE; bot's own messages only).
+  - `slack_pin_message` / `slack_unpin_message` (reversible pair).
+  - `slack_add_reaction` (emoji name without colons; auto-strips them defensively).
+- New `src/tools/blocks.ts` — Zod `BlocksSchema` (validates each block has a `type` field) plus a `BLOCK_KIT_REFERENCE` doc string embedded into the post-message tool description so Claude has the seven block shapes (header / section / divider / actions / image / context / input) and text-object shapes (`plain_text` vs `mrkdwn`) at hand.
+- Empty-body guard returns a friendly error instead of letting Slack reject the call.
+
 ## 0.0.3
 
 - Phase 4 — user groups (subteams). Seven `usergroups.*` tools:
