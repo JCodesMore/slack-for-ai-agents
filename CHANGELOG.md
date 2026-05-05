@@ -1,5 +1,65 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
+
+## [0.1.0] - 2026-05-04
+
+First stable release. Hand Claude a Slack bot token, get a fully-administered workspace.
+
+### Highlights vs. other Slack MCPs
+
+- **`slack_apply_template` ships a rollback log.** Every created resource is paired with the destructive tool that undoes it (`slack_archive_channel`, `slack_disable_usergroup`, `slack_delete_canvas`, `slack_delete_scheduled_message`), so an LLM can walk back a botched apply without guessing IDs. None of the existing community MCPs do this.
+- **`/slack:workspace-from-prompt` + `slack-architect` agent** — describe a workspace in plain English, the architect picks a bundled template (or designs from scratch), dry-runs the spec, shows you a structured preview via `AskUserQuestion`, and applies on approval. The architect is restricted to four tools so it can't bypass the macro and accidentally rewrite a live channel.
+- **Admin/builder positioning, not "AI agent posts in Slack."** This plugin is for *building* the workspace — channels, usergroups, templates, scheduled rituals, canvases — rather than reading and responding to messages.
+
+### What shipped (Phases 0–9)
+
+**Setup & state**
+- `userConfig.bot_token` (sensitive) — keychain-backed token capture at install.
+- `${CLAUDE_PLUGIN_DATA}/state.json` for non-sensitive state (active workspace id, bot identity, last verified timestamp).
+- SessionStart hooks: `ensure-deps.mjs` lazily installs runtime deps; `session-banner.mjs` surfaces token + active-workspace status to the assistant on every session.
+- `/slack:setup` skill — friendly conversational walkthrough that verifies the token, surfaces missing scopes, and locks in the active workspace.
+- `slack_whoami` — proves the token works via `auth.test`, persists workspace identity to plugin state.
+
+**MCP tools (45+ total)**
+
+- Channels: `slack_list_channels`, `slack_create_channel`, `slack_archive_channel` / `slack_unarchive_channel`, `slack_rename_channel`, `slack_set_channel_topic`, `slack_set_channel_purpose`, `slack_invite_to_channel`, `slack_kick_from_channel`, `slack_join_channel`, `slack_leave_channel`.
+- User groups: `slack_list_usergroups`, `slack_create_usergroup`, `slack_update_usergroup`, `slack_list_usergroup_users`, `slack_update_usergroup_users`, `slack_disable_usergroup`, `slack_enable_usergroup`.
+- Messages + Block Kit: `slack_post_message`, `slack_post_ephemeral_message`, `slack_update_message`, `slack_delete_message`, `slack_pin_message`, `slack_unpin_message`, `slack_add_reaction`. Block-shape reference (`header` / `section` / `divider` / `actions` / `image` / `context` / `input`) embedded in tool descriptions for grep-ability by the agent.
+- Scheduling: `slack_schedule_message`, `slack_list_scheduled_messages`, `slack_delete_scheduled_message`. Pre-flights past-date and 120-day-future limits.
+- Canvases: `slack_create_canvas`, `slack_edit_canvas`, `slack_delete_canvas`, `slack_create_channel_canvas` (channel-tab canvases work on every plan; standalone canvases need Slack paid).
+- Users + webhooks + raw API: `slack_list_users`, `slack_get_user`, `slack_lookup_user_by_email`, `slack_get_user_profile`, `slack_post_via_webhook` (no SDK auth, no scope, URL prefix validated against `https://hooks.slack.com/`), `slack_raw_api_call` (escape hatch for any Web API method not yet wrapped).
+
+**Templates & macros**
+- `slack_list_templates` — enumerate bundled JSON specs.
+- `slack_dry_run_template` — accepts `template_name` (bundled) or inline `spec`; parses + validates and returns a structured preview without touching Slack.
+- `slack_apply_template` — bulk-creates resources in order: **channels → usergroups → welcome_canvas → scheduled_messages**. Idempotent (matches channels by name and usergroups by handle — never modifies or deletes). Cross-references (usergroup `channel_ids`, `welcome_canvas.channel_id`, `scheduled_messages[].channel_id`) accept either a literal Slack channel ID OR a channel name from the same template / existing workspace, resolved at apply time. Returns a rollback log keyed to the destructive tools that undo each created resource.
+- Bundled templates: `small-team`, `public-community`, `ai-research-lab`.
+
+**Workspace-from-prompt**
+- `slack-architect` sub-agent — sonnet-backed; takes a brief, picks a bundled template (or designs from scratch), produces a `templateSpec` JSON matching `slack_apply_template`'s schema, dry-runs via `slack_dry_run_template`, surfaces a structured preview via `AskUserQuestion`, and applies on approval. Restricted to template tools (no direct channel/usergroup primitives) so it can't bypass the macro. Capped at 3 modify-iterations per run.
+- `/slack:workspace-from-prompt` slash command — confirms the active workspace, captures (or accepts inline) a brief, spawns the architect, and relays the final summary plus rollback log to the user.
+
+### Deferred (admin user token required)
+
+Surfaced as friendly errors in the relevant tools today; will be unlocked when we add an optional `xoxp-` admin user-token field in a later release:
+
+- Workspace member invite/remove (`admin.users.invite` / `admin.users.remove`).
+- Admin tier setters (`admin.users.setAdmin` / `setOwner` / `setRegular`).
+- Default channels for new members (`admin.team.settings.setDefaultChannels`).
+- Retention policies (`admin.conversations.setRetention*`).
+- Reminders (`reminders.add` / `list` / `delete`) — user-token scopes only.
+
+### Built on
+
+- [@modelcontextprotocol/sdk](https://modelcontextprotocol.io/) — exposes Slack tools to Claude
+- [@slack/web-api](https://tools.slack.dev/node-slack-sdk/web-api) — official Slack Web API client with typed methods and built-in rate-limit handling
+- [zod](https://zod.dev/) — schema validation
+
+---
+
 ## 0.0.8
 
 - Phase 9 — `slack-architect` agent + `/slack:workspace-from-prompt` slash command. Mirrors the Discord plugin's `discord-architect` pattern, adapted for Slack's flat channel model + usergroup tiers.
