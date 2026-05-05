@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.0.6
+
+- Phase 7 — users + incoming-webhooks walkthrough + raw-API escape hatch. Six new tools:
+  - `slack_list_users` (`users.list`) — cursor-paginated; returns id, name, real_name, display_name, admin/owner/guest flags, deleted state, email (when `users:read.email` is granted), title, status, tz. Optional `filter_deleted` strips deactivated accounts client-side.
+  - `slack_get_user` (`users.info`) — single-user lookup by ID.
+  - `slack_lookup_user_by_email` (`users.lookupByEmail`) — reconciles external systems → Slack IDs.
+  - `slack_get_user_profile` (`users.profile.get`) — full profile including custom workspace fields, pronouns, phone, full status with expiration timestamp, high-res image URLs.
+  - `slack_post_via_webhook` — POSTs JSON to a user-supplied incoming-webhook URL via `fetch` (no SDK auth, no bot scope, no channel membership). Webhook URLs are NOT persisted; they're passed per-call. Tool description embeds the manual setup walkthrough (api.slack.com/apps → Incoming Webhooks → Add New Webhook to Workspace → copy URL). URL prefix validated against `https://hooks.slack.com/` to block typos.
+  - `slack_raw_api_call` — escape hatch for any Slack Web API method not covered by a dedicated tool (`team.info`, `files.list`, `bookmarks.add`, `dnd.setSnooze`, etc.). Wraps `WebClient.apiCall`. Method name validated against `/^[a-z]+(\.[a-zA-Z]+)+$/` to reject obvious garbage. DESTRUCTIVE annotation since the bot can't tell from the method name whether the call reads or writes.
+- Workspace member invite/remove (`admin.users.invite` / `admin.users.remove`) deferred — those endpoints require an admin user token (`xoxp-`), which we don't expose a config field for yet (same constraint Phases 4 and 6 hit).
+
 ## 0.0.5
 
 - Phase 6 — scheduled messages + canvases. Seven new tools:

@@ -1,6 +1,6 @@
 {
   "name": "@jcodesmore/slack-for-ai-agents",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Slack workspace admin tools for AI coding agents — natural-language management of channels, usergroups, Block Kit messages, scheduled posts, canvases, and full workspace templates",
   "type": "module",
   "main": "dist/server.js",

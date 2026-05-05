@@ -12,6 +12,9 @@ import { registerUsergroupTools } from './tools/usergroups.js';
 import { registerMessageTools } from './tools/messages.js';
 import { registerSchedulingTools } from './tools/scheduling.js';
 import { registerCanvasTools } from './tools/canvases.js';
+import { registerUserTools } from './tools/users.js';
+import { registerWebhookTools } from './tools/webhooks.js';
+import { registerRawTool } from './tools/raw.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'));
@@ -27,6 +30,9 @@ registerUsergroupTools(server);
 registerMessageTools(server);
 registerSchedulingTools(server);
 registerCanvasTools(server);
+registerUserTools(server);
+registerWebhookTools(server);
+registerRawTool(server);
 
 async function main() {
   const transport = new StdioServerTransport();

@@ -47,8 +47,10 @@ export function registerCanvasTools(server: McpServer): void {
     {
       description:
         'Creates a standalone canvas (rich-text doc) via canvases.create. Returns canvas_id which can be passed to slack_edit_canvas / slack_delete_canvas. ' +
-        'Standalone canvases live outside any channel — to attach a canvas to a channel tab, use slack_create_channel_canvas. ' +
+        'Standalone canvases live outside any channel — to attach a canvas to a channel tab, use slack_create_channel_canvas instead. ' +
         'Requires the canvases:write bot scope. ' +
+        'NOTE: standalone canvases are a Slack paid-plan feature. Free workspaces will get `free_teams_cannot_create_non_tabbed_canvases` ' +
+        '— fall back to slack_create_channel_canvas, which works on every plan. ' +
         CANVAS_MARKDOWN_HINT,
       inputSchema: {
         title: z.string().optional().describe('Canvas title shown at the top.'),
