@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.0.5
+
+- Phase 6 — scheduled messages + canvases. Seven new tools:
+  - `slack_schedule_message` (`chat.scheduleMessage`) — accepts ISO 8601 or Unix epoch for `post_at`; pre-flights past-date and 120-day-future limits with friendly errors.
+  - `slack_list_scheduled_messages` (`chat.scheduledMessages.list`) — cursor-paginated, optional channel/oldest/latest filter, returns ISO timestamp + 80-char text preview.
+  - `slack_delete_scheduled_message` (`chat.deleteScheduledMessage`) — DESTRUCTIVE; cancels a pending message before it sends.
+  - `slack_create_canvas` (`canvases.create`) — standalone canvas with markdown body + optional title.
+  - `slack_edit_canvas` (`canvases.edit`) — apply a list of `insert_at_end` / `insert_at_start` / `insert_after` / `insert_before` / `replace` / `delete` operations.
+  - `slack_delete_canvas` (`canvases.delete`) — DESTRUCTIVE; reversible-pair partner to create.
+  - `slack_create_channel_canvas` (`conversations.canvases.create`) — attach a canvas to a channel's Canvas tab; idempotent (returns existing canvas_id if one is already attached).
+- Reminders (`reminders.add` / `list` / `delete`) deferred — those endpoints require user-token scopes (`reminders:read` / `reminders:write`) which a bot token can't carry. Will revisit when we add the optional `xoxp-` admin/user-token field.
+- Retention controls (`admin.conversations.setRetention*`) deferred for the same reason — admin user token only.
+
 ## 0.0.4
 
 - Phase 5 — messages + Block Kit. Seven `chat.*` / `pins.*` / `reactions.*` tools:

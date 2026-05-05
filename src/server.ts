@@ -10,6 +10,8 @@ import { registerWhoamiTool } from './tools/whoami.js';
 import { registerChannelTools } from './tools/channels.js';
 import { registerUsergroupTools } from './tools/usergroups.js';
 import { registerMessageTools } from './tools/messages.js';
+import { registerSchedulingTools } from './tools/scheduling.js';
+import { registerCanvasTools } from './tools/canvases.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'));
@@ -23,6 +25,8 @@ registerWhoamiTool(server);
 registerChannelTools(server);
 registerUsergroupTools(server);
 registerMessageTools(server);
+registerSchedulingTools(server);
+registerCanvasTools(server);
 
 async function main() {
   const transport = new StdioServerTransport();
