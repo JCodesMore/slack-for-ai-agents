@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.8
+
+- Phase 9 — `slack-architect` agent + `/slack:workspace-from-prompt` slash command. Mirrors the Discord plugin's `discord-architect` pattern, adapted for Slack's flat channel model + usergroup tiers.
+  - `agents/slack-architect.md` — sonnet-backed sub-agent that takes a natural-language brief ("make me a workspace for a 12-person eng team focused on infra"), picks a starting point (`small-team` / `public-community` / `ai-research-lab` bundled template, or designs from scratch), produces a `templateSpec` JSON matching `slack_apply_template`'s schema, dry-runs it via `slack_dry_run_template`, surfaces a structured preview to the user via `AskUserQuestion`, and applies via `slack_apply_template` once approved. Capped at 3 modify-iterations per run; restricts itself to template tools (no direct channel/usergroup primitives).
+  - `commands/workspace-from-prompt.md` — `/slack:workspace-from-prompt` slash command that confirms the active workspace via `slack_whoami`, captures (or accepts inline) a brief, spawns the architect with the workspace pre-anchored, and relays the architect's final summary plus rollback log to the user.
+  - The agent embeds Slack-specific design heuristics (sizing tables, channel naming conventions like `team-` / `proj-` / `help-`, usergroup patterns, paid-plan caveats for usergroups + standalone canvases) and explicitly enumerates the admin-token-deferred surface (workspace member invite/remove, retention, default channels, reminders, admin tier setters) so it doesn't wander into unbuildable territory.
+
 ## 0.0.7
 
 - Phase 8 — workspace-template macro. Three new tools in `src/tools/template.ts` plus three bundled templates under `templates/`:

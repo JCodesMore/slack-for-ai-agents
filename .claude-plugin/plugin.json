@@ -1,7 +1,7 @@
 {
   "name": "slack",
   "description": "Slack workspace admin via natural language — channels, usergroups, Block Kit messages, scheduled posts, canvases, and full workspace templates",
-  "version": "0.0.1",
+  "version": "0.0.8",
   "author": {
     "name": "JCodesMore",
     "url": "https://github.com/JCodesMore"

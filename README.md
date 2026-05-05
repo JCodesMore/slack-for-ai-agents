@@ -12,7 +12,7 @@ Channels, user groups, Block Kit messages, scheduled posts, canvases, retention 
 
 ## Status
 
-Early scaffold (v0.0.7). Phases 0–8 of 10 complete:
+Early scaffold (v0.0.8). Phases 0–9 of 10 complete:
 
 - [x] **Phase 0** — repo skeleton, manifest, MCP server boots
 - [x] **Phase 1** — `slack_whoami` proves token wiring works
@@ -23,7 +23,7 @@ Early scaffold (v0.0.7). Phases 0–8 of 10 complete:
 - [x] **Phase 6** — scheduled messages (schedule, list, cancel) + canvases (create/edit/delete standalone, attach-to-channel). Reminders + retention deferred until we wire an admin/user token. *Standalone canvases (`slack_create_canvas`) require a Slack paid plan; channel-tab canvases (`slack_create_channel_canvas`) work on every plan.*
 - [x] **Phase 7** — users (list, get, lookup-by-email, profile-get) + incoming-webhooks (post-via-webhook, manual setup docs in tool description) + raw-API escape hatch (`slack_raw_api_call`). Workspace member invite/remove deferred — admin user token required.
 - [x] **Phase 8** — workspace-template macro: `slack_list_templates`, `slack_dry_run_template`, `slack_apply_template`. Idempotent (matches channels by name, usergroups by handle), composes Phase 3–6 SDK calls (channels → usergroups → welcome canvas → scheduled messages), returns a rollback log keyed to the destructive tools that undo each created resource. Bundled templates: `small-team`, `public-community`, `ai-research-lab`.
-- [ ] Phase 9 — `slack-architect` agent + `/slack:workspace-from-prompt`
+- [x] **Phase 9** — `slack-architect` sub-agent + `/slack:workspace-from-prompt` slash command. Describe a workspace in plain English; the architect picks a bundled template (or designs from scratch), dry-runs it, shows you a structured preview, and applies on approval — mirroring the Discord plugin's `/discord:server-from-prompt` flow.
 - [ ] Phase 10 — polish, docs, marketplace listing
 
 ## Quick Start (developer install)
