@@ -1,0 +1,56 @@
+{
+  "name": "AI Research Lab",
+  "description": "ML / AI research group workspace: paper club, experiments, evals, infra, code-review, plus a private leads channel and Researchers / Lab Leads usergroups.",
+  "channels": [
+    {
+      "name": "paper-club",
+      "topic": "Weekly paper readings.",
+      "purpose": "Share papers, schedule readings, post discussion threads."
+    },
+    {
+      "name": "experiments",
+      "topic": "Active experiments and live results.",
+      "purpose": "Run logs, hypothesis posts, result threads. Tag with model + dataset."
+    },
+    {
+      "name": "model-eval",
+      "topic": "Model evals, benchmarks, regression alerts.",
+      "purpose": "Evaluation runs, leaderboard updates, regression triage."
+    },
+    {
+      "name": "infra",
+      "topic": "Compute, datasets, pipelines.",
+      "purpose": "Cluster issues, dataset versioning, pipeline ownership."
+    },
+    {
+      "name": "code-review",
+      "topic": "Code reviews, PRs, design docs.",
+      "purpose": "Cross-team review of model code, data tooling, eval harnesses."
+    },
+    {
+      "name": "general",
+      "topic": "Casual lab chat.",
+      "purpose": "Off-topic, intros, shoutouts."
+    },
+    {
+      "name": "lab-leads",
+      "is_private": true,
+      "topic": "Lab leadership.",
+      "purpose": "Direction, hiring, headcount, budget."
+    }
+  ],
+  "usergroups": [
+    {
+      "name": "Researchers",
+      "handle": "researchers",
+      "description": "Active researchers in the lab.",
+      "channel_ids": ["paper-club", "experiments", "model-eval", "general"]
+    },
+    {
+      "name": "Lab Leads",
+      "handle": "lab-leads",
+      "description": "Lab leadership.",
+      "channel_ids": ["lab-leads"]
+    }
+  ]
+}

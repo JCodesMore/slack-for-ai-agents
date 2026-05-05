@@ -1,0 +1,49 @@
+{
+  "name": "Public Community",
+  "description": "Open-community workspace: announcements, intros, lounges, showcase, and contributor channels with Mods + Contributors usergroups.",
+  "channels": [
+    {
+      "name": "announcements",
+      "topic": "Read-only news. React/thread, don't reply with new posts.",
+      "purpose": "Mods post here. Members react and discuss in threads."
+    },
+    {
+      "name": "introductions",
+      "topic": "Say hi! Tell us what you're working on.",
+      "purpose": "Welcome thread for new members."
+    },
+    {
+      "name": "general",
+      "topic": "Community chat.",
+      "purpose": "Main hangout channel — anything community-related."
+    },
+    {
+      "name": "showcase",
+      "topic": "Share what you're building.",
+      "purpose": "Demos, side-projects, work-in-progress to celebrate."
+    },
+    {
+      "name": "off-topic",
+      "topic": "Anything goes (within the rules).",
+      "purpose": "Memes, music, life updates."
+    },
+    {
+      "name": "feedback",
+      "topic": "Suggestions and bug reports.",
+      "purpose": "Tell the mods what you want changed about the community."
+    }
+  ],
+  "usergroups": [
+    {
+      "name": "Mods",
+      "handle": "mods",
+      "description": "Community moderators.",
+      "channel_ids": ["announcements", "general", "feedback"]
+    },
+    {
+      "name": "Contributors",
+      "handle": "contributors",
+      "description": "Active contributors and helpers."
+    }
+  ]
+}

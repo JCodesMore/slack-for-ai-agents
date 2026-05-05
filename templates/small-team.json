@@ -1,0 +1,35 @@
+{
+  "name": "Small Team",
+  "description": "3-15 person team starter: project channels for chat / standup / random plus a private leads-only channel and a Team Leads usergroup.",
+  "channels": [
+    {
+      "name": "team-general",
+      "topic": "Daily team chat.",
+      "purpose": "Where the team talks about work in progress."
+    },
+    {
+      "name": "team-random",
+      "topic": "Off-topic, links, watercooler.",
+      "purpose": "Anything non-work."
+    },
+    {
+      "name": "team-standup",
+      "topic": "Daily standups, blockers, weekly goals.",
+      "purpose": "Async standup updates: what you did, what you're doing, what's blocking you."
+    },
+    {
+      "name": "team-leads",
+      "is_private": true,
+      "topic": "Leads-only space.",
+      "purpose": "Sensitive decisions, hiring conversations, priority calls."
+    }
+  ],
+  "usergroups": [
+    {
+      "name": "Team Leads",
+      "handle": "team-leads",
+      "description": "Decision-makers and on-call leads.",
+      "channel_ids": ["team-leads"]
+    }
+  ]
+}

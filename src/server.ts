@@ -15,6 +15,7 @@ import { registerCanvasTools } from './tools/canvases.js';
 import { registerUserTools } from './tools/users.js';
 import { registerWebhookTools } from './tools/webhooks.js';
 import { registerRawTool } from './tools/raw.js';
+import { registerTemplateTools } from './tools/template.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'));
@@ -33,6 +34,7 @@ registerCanvasTools(server);
 registerUserTools(server);
 registerWebhookTools(server);
 registerRawTool(server);
+registerTemplateTools(server);
 
 async function main() {
   const transport = new StdioServerTransport();

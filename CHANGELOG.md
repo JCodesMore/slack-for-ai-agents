@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.0.7
+
+- Phase 8 — workspace-template macro. Three new tools in `src/tools/template.ts` plus three bundled templates under `templates/`:
+  - `slack_list_templates` (READ_ONLY) — enumerates the JSON specs shipped under `templates/<name>.json`.
+  - `slack_dry_run_template` (READ_ONLY) — accepts either `template_name` (bundled) or inline `spec`, parses + validates, returns a structured preview (channel visibility, usergroup handles, members count, scheduled-message text previews) without making any API calls.
+  - `slack_apply_template` (DESTRUCTIVE) — bulk-creates resources in order: **channels → usergroups → welcome_canvas → scheduled_messages**. Idempotent: channels matching by name and usergroups matching by handle (or name fallback) are SKIPPED, never modified or deleted. Composes Phase 3–6 SDK calls directly (`conversations.list/create/setTopic/setPurpose/invite`, `usergroups.list/create/users.update`, `conversations.canvases.create`, `chat.scheduleMessage`). Cross-references (usergroup `channel_ids`, `welcome_canvas.channel_id`, `scheduled_messages[].channel_id`) accept either a literal Slack channel ID OR a channel name from the same template / existing workspace — resolved at apply time so a single-pass template can wire just-created channels to canvases and scheduled messages.
+- Returns a `rollback` log per apply: each created resource paired with the destructive tool that undoes it (`slack_archive_channel`, `slack_disable_usergroup`, `slack_delete_canvas`, `slack_delete_scheduled_message`). An LLM can read the rollback log and undo the run without guessing IDs.
+- Bundled templates:
+  - `small-team` — team-general / team-random / team-standup + private team-leads channel + Team Leads usergroup.
+  - `public-community` — announcements / introductions / general / showcase / off-topic / feedback + Mods + Contributors usergroups.
+  - `ai-research-lab` — paper-club / experiments / model-eval / infra / code-review / general + private lab-leads channel + Researchers + Lab Leads usergroups.
+- Channel-list pagination: `slack_apply_template` paginates `conversations.list` with `limit=1000` until `next_cursor` is empty, so workspaces with >1000 channels still match correctly for idempotency.
+
 ## 0.0.6
 
 - Phase 7 — users + incoming-webhooks walkthrough + raw-API escape hatch. Six new tools:
