@@ -1,7 +1,7 @@
 {
   "name": "slack",
-  "description": "Hand Claude a bot token and admin a Slack workspace in plain English — channels, usergroups, Block Kit messages, scheduled posts, canvases, and full workspace-from-prompt templates",
-  "version": "0.1.0",
+  "description": "Hand Claude a bot token and admin a Slack workspace in plain English — channels, usergroups, Block Kit messages, scheduled posts, canvases, and full workspace templates from a one-line brief",
+  "version": "0.1.1",
   "author": {
     "name": "JCodesMore",
     "url": "https://github.com/JCodesMore"

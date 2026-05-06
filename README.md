@@ -31,31 +31,31 @@ Channels, user groups, Block Kit messages, scheduled posts, canvases, and full w
 /slack:setup
 ```
 
-Claude verifies the token, locks in the active workspace, and tells you what to try next.
+Claude verifies the token, locks in the active workspace, and tells you what to try next. After that, you can run `/slack` (no subcommand) any time you want to do something — the main skill routes channel ops, messaging, scheduling, canvases, and workspace-from-brief design from the same entry point.
 
 ## Try it
 
 Talk to Claude like a sysadmin who actually wants to help:
 
-- *"Make me a workspace for a 12-person eng team focused on infra."* → `/slack:workspace-from-prompt`
-- *"Apply the small-team template."*
-- *"Create a `#release-notes` channel, set the topic to 'Ship logs only', and invite the @release-eng usergroup."*
-- *"Post an announcement in `#general` with a header block, a section, and a divider."*
-- *"Schedule a daily 9am standup ping in `#team-standup` for next week."*
-- *"Make a Project Orion canvas in `#proj-orion` with the kickoff brief."*
-- *"Add a Mods user group with a `@mods` handle, defaulted to #moderators."*
+- *"/slack make me a workspace for a 12-person eng team focused on infra."* → spawns the architect.
+- *"/slack apply the small-team template."*
+- *"/slack create a `#release-notes` channel, set the topic to 'Ship logs only', and invite the @release-eng usergroup."*
+- *"/slack post an announcement in `#general` with a header block, a section, and a divider."*
+- *"/slack schedule a daily 9am standup ping in `#team-standup` for next week."*
+- *"/slack make a Project Orion canvas in `#proj-orion` with the kickoff brief."*
+- *"/slack add a Mods user group with a `@mods` handle, defaulted to #moderators."*
 
 The agent picks the right Slack methods, validates inputs, and reports back what changed (with Slack's actual error codes when something fails).
 
 ### What it builds
 
-Here's a copy-pasteable workspace-from-prompt example. Run this in a fresh test workspace:
+Here's a copy-pasteable workspace-from-brief example. Run this in a fresh test workspace:
 
 ```
-/slack:workspace-from-prompt make me a workspace for an 8-person ML research lab focused on RLHF
+/slack make me a workspace for an 8-person ML research lab focused on RLHF
 ```
 
-The architect spawns, picks `ai-research-lab` as a starting point, dry-runs a spec, and shows you a preview before touching anything:
+The main skill recognizes the brief, spawns the architect, picks `ai-research-lab` as a starting point, dry-runs a spec, and shows you a preview before touching anything:
 
 ```
 Preview:
@@ -87,10 +87,11 @@ If anything goes sideways, hand the rollback log back to Claude — every create
 
 ## Features
 
-**45+ Slack tools** wrapped in **one skill**, **one agent**, and **one slash command** — covering setup, channels, user groups, messaging, Block Kit, scheduling, canvases, users, webhooks, and workspace templates.
+**45+ Slack tools** wrapped in **two skills** and **one agent** — covering setup, channels, user groups, messaging, Block Kit, scheduling, canvases, users, webhooks, and workspace templates.
 
 ### Auth & setup
 
+- `/slack` — main skill. Routes intents (channel ops, messaging, scheduling, canvases, "make me a workspace for…") from a single entry point. Falls back to `/slack:setup` if the bot token isn't configured yet.
 - `/slack:setup` — friendly conversational walkthrough: verifies your bot token via `auth.test`, surfaces missing scopes, locks in the active workspace.
 - `slack_whoami` — proves the token works and pins the workspace identity (`team_id`, `team_name`, `bot_user_id`, `bot_username`) into plugin state.
 - SessionStart banner reminds Claude on every new session what workspace is active so it doesn't ask you twice.
@@ -150,8 +151,8 @@ If anything goes sideways, hand the rollback log back to Claude — every create
 
 ### Natural-language architect
 
-- `/slack:workspace-from-prompt` — describe the workspace in plain English, the **`slack-architect`** sub-agent picks a starting point (bundled template or designs from scratch), dry-runs the spec, shows you a structured preview, asks for approval, and applies on confirmation.
-- The architect is restricted to four tools (`slack_whoami`, `slack_list_templates`, `slack_dry_run_template`, `slack_apply_template`, plus `AskUserQuestion`) so it can't bypass the macro and accidentally rewrite a live channel.
+- Inside the main `/slack` skill: phrases like *"make me a workspace for…"*, *"design a workspace for…"*, *"build a Slack for…"* spawn the **`slack-architect`** sub-agent. The architect picks a starting point (bundled template or designs from scratch), dry-runs the spec, shows you a structured preview, asks for approval, and applies on confirmation.
+- The architect's standard workflow leans on `slack_dry_run_template` → preview → `slack_apply_template`, but it has access to the full Slack toolset if a brief needs custom follow-up (e.g., posting a kickoff message into a freshly-created channel).
 - Capped at 3 modify-iterations per run.
 
 ## Known limits

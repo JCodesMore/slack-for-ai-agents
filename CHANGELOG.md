@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-05-06
+
+Skill consolidation + cleanliness pass. No new tools — same 45+ MCP surface, friendlier shape.
+
+### Changed
+
+- **Top-level `/slack` skill is now the front door.** Previously a user typing `/slack` got nothing — they had to know the exact sub-command (`/slack:setup` or the now-removed `/slack:workspace-from-prompt`). The new `skills/slack/SKILL.md` greets the user with a state-aware welcome (token missing → routes to `/slack:setup`; configured → shows the active workspace and a 4-line menu) and routes intents from a single entry point.
+- **`/slack:workspace-from-prompt` slash command merged into `/slack`.** Phrases like *"make me a workspace for…"*, *"design a workspace for…"*, *"build a Slack for…"* now trigger the architect-spawning routing path inside the main skill. The `commands/workspace-from-prompt.md` file has been removed; functionality is unchanged.
+- **Block Kit reference promoted to `skills/slack/references/block-kit.md`.** Previously the full block-shape doc was embedded inline in `slack_post_message`'s tool description (kept it scannable for the LLM but stuffed the description). The tool description now carries a 5-line cheat sheet and points to the reference file for deep shapes, mrkdwn syntax, limits, and worked examples.
+- **`slack-architect` body rewritten to describe the four template tools as its standard workflow, not a hard restriction.** The agent's frontmatter has no `tools:` field — it always had full Slack toolset access. The doc now matches the code: `slack_dry_run_template` → preview → `slack_apply_template` is the preferred path for the common case, with the full toolbox available when a brief genuinely needs custom follow-up after the apply.
+
+### Fixed
+
+- **README + CHANGELOG no longer claim the architect is "restricted to four tools."** That sentence was a doc/code mismatch — the agent never had a `tools:` whitelist. Replaced with a description of the architect's preferred workflow that matches actual behavior.
+
 ## [0.1.0] - 2026-05-04
 
 First stable release. Hand Claude a Slack bot token, get a fully-administered workspace.
@@ -11,7 +26,7 @@ First stable release. Hand Claude a Slack bot token, get a fully-administered wo
 ### Highlights vs. other Slack MCPs
 
 - **`slack_apply_template` ships a rollback log.** Every created resource is paired with the destructive tool that undoes it (`slack_archive_channel`, `slack_disable_usergroup`, `slack_delete_canvas`, `slack_delete_scheduled_message`), so an LLM can walk back a botched apply without guessing IDs. None of the existing community MCPs do this.
-- **`/slack:workspace-from-prompt` + `slack-architect` agent** — describe a workspace in plain English, the architect picks a bundled template (or designs from scratch), dry-runs the spec, shows you a structured preview via `AskUserQuestion`, and applies on approval. The architect is restricted to four tools so it can't bypass the macro and accidentally rewrite a live channel.
+- **`/slack:workspace-from-prompt` + `slack-architect` agent** — describe a workspace in plain English, the architect picks a bundled template (or designs from scratch), dry-runs the spec, shows you a structured preview via `AskUserQuestion`, and applies on approval. The architect's standard workflow is `slack_dry_run_template` → preview → `slack_apply_template`, so the create-only macro is doing the heavy lifting and a usable rollback log comes back with the apply. *(0.1.1 note: `/slack:workspace-from-prompt` was folded into the main `/slack` skill.)*
 - **Admin/builder positioning, not "AI agent posts in Slack."** This plugin is for *building* the workspace — channels, usergroups, templates, scheduled rituals, canvases — rather than reading and responding to messages.
 
 ### What shipped (Phases 0–9)
@@ -39,7 +54,7 @@ First stable release. Hand Claude a Slack bot token, get a fully-administered wo
 - Bundled templates: `small-team`, `public-community`, `ai-research-lab`.
 
 **Workspace-from-prompt**
-- `slack-architect` sub-agent — sonnet-backed; takes a brief, picks a bundled template (or designs from scratch), produces a `templateSpec` JSON matching `slack_apply_template`'s schema, dry-runs via `slack_dry_run_template`, surfaces a structured preview via `AskUserQuestion`, and applies on approval. Restricted to template tools (no direct channel/usergroup primitives) so it can't bypass the macro. Capped at 3 modify-iterations per run.
+- `slack-architect` sub-agent — sonnet-backed; takes a brief, picks a bundled template (or designs from scratch), produces a `templateSpec` JSON matching `slack_apply_template`'s schema, dry-runs via `slack_dry_run_template`, surfaces a structured preview via `AskUserQuestion`, and applies on approval. Standard workflow stays on the template tools so the create-only macro does the heavy lifting and a usable rollback log comes back with each apply. Capped at 3 modify-iterations per run.
 - `/slack:workspace-from-prompt` slash command — confirms the active workspace, captures (or accepts inline) a brief, spawns the architect, and relays the final summary plus rollback log to the user.
 
 ### Deferred (admin user token required)
@@ -63,7 +78,7 @@ Surfaced as friendly errors in the relevant tools today; will be unlocked when w
 ## 0.0.8
 
 - Phase 9 — `slack-architect` agent + `/slack:workspace-from-prompt` slash command. Mirrors the Discord plugin's `discord-architect` pattern, adapted for Slack's flat channel model + usergroup tiers.
-  - `agents/slack-architect.md` — sonnet-backed sub-agent that takes a natural-language brief ("make me a workspace for a 12-person eng team focused on infra"), picks a starting point (`small-team` / `public-community` / `ai-research-lab` bundled template, or designs from scratch), produces a `templateSpec` JSON matching `slack_apply_template`'s schema, dry-runs it via `slack_dry_run_template`, surfaces a structured preview to the user via `AskUserQuestion`, and applies via `slack_apply_template` once approved. Capped at 3 modify-iterations per run; restricts itself to template tools (no direct channel/usergroup primitives).
+  - `agents/slack-architect.md` — sonnet-backed sub-agent that takes a natural-language brief ("make me a workspace for a 12-person eng team focused on infra"), picks a starting point (`small-team` / `public-community` / `ai-research-lab` bundled template, or designs from scratch), produces a `templateSpec` JSON matching `slack_apply_template`'s schema, dry-runs it via `slack_dry_run_template`, surfaces a structured preview to the user via `AskUserQuestion`, and applies via `slack_apply_template` once approved. Capped at 3 modify-iterations per run; standard workflow stays on the template tools so the create-only macro does the heavy lifting.
   - `commands/workspace-from-prompt.md` — `/slack:workspace-from-prompt` slash command that confirms the active workspace via `slack_whoami`, captures (or accepts inline) a brief, spawns the architect with the workspace pre-anchored, and relays the architect's final summary plus rollback log to the user.
   - The agent embeds Slack-specific design heuristics (sizing tables, channel naming conventions like `team-` / `proj-` / `help-`, usergroup patterns, paid-plan caveats for usergroups + standalone canvases) and explicitly enumerates the admin-token-deferred surface (workspace member invite/remove, retention, default channels, reminders, admin tier setters) so it doesn't wander into unbuildable territory.
 
