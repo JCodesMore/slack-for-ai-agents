@@ -6,6 +6,8 @@
 
 Channels, user groups, Block Kit messages, scheduled posts, canvases, and full workspace templates — described in plain English and applied with one tool call. Or hand Claude a one-line brief and watch the whole workspace materialize.
 
+[![Discord](https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/hrTSX5yTpB)
+
 [Quick Start](#quick-start) · [Try it](#try-it) · [Features](#features)
 
 </div>
